@@ -13,29 +13,34 @@ function [Tmin,Tmax,Tmean,seaLevelPressure,stationPressure] = getHistoricalWeath
 %
 % For this code, it uses the Global Surface Summary of the Day (GSOD)
 % dataset, and the Naha statation (47936099999) to fetch temperatures and
-% sea level pressure data. For more information on the dataset, visit 
+% sea level pressure data. For more information on the dataset, visit
 % <https://www.ncei.noaa.gov/data/global-summary-of-the-day/doc/readme.txt>
 %
 % It should be easy to modify the code to suit other weather data and dataset
-% needs. For more infomatio, visit NCEI API website 
+% needs. For more infomatio, visit NCEI API website
 % <https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation>
 %
 % Julio Barros - 2021
 
 WeatherData = getWeatherDataFromService(Date);
 
-Tmean = str2double(cat(1,WeatherData.TEMP)); % [F]
-Tmin = str2double(cat(1,WeatherData.MIN));   % [F]
-Tmax = str2double(cat(1,WeatherData.MAX));   % [F]
-seaLevelPressure = str2double(cat(1,WeatherData.SLP)); % [mb]
-stationPressure = str2double(cat(1,WeatherData.STP));  % [mb]
-
-% Convert to SI units
-Tmean = Fahenheit2Celsius(Tmean); % [C]
-Tmin = Fahenheit2Celsius(Tmin);   % [C]
-Tmax = Fahenheit2Celsius(Tmax);   % [C]
-seaLevelPressure = seaLevelPressure * 100; %{Pa]
-stationPressure = stationPressure * 100; %{Pa]
+if ~isempty(WeatherData)
+    Tmean = str2double(cat(1,WeatherData.TEMP)); % [F]
+    Tmin = str2double(cat(1,WeatherData.MIN));   % [F]
+    Tmax = str2double(cat(1,WeatherData.MAX));   % [F]
+    seaLevelPressure = str2double(cat(1,WeatherData.SLP)); % [mb]
+    stationPressure = str2double(cat(1,WeatherData.STP));  % [mb]
+    
+    % Convert to SI units
+    Tmean = Fahenheit2Celsius(Tmean); % [C]
+    Tmin = Fahenheit2Celsius(Tmin);   % [C]
+    Tmax = Fahenheit2Celsius(Tmax);   % [C]
+    seaLevelPressure = seaLevelPressure * 100; %{Pa]
+    stationPressure = stationPressure * 100; %{Pa]
+else
+    Tmean = []; Tmin = []; Tmax = [];
+    seaLevelPressure = []; stationPressure = [];
+end
 end
 
 function WeatherData = getWeatherDataFromService(Date)
