@@ -17,11 +17,11 @@ For more infomatio, visit NCEI API website <https://www.ncei.noaa.gov/support/ac
 ```
 [Tmin,Tmax,Tmean,seaLevelPressure,stationPressure] = getHistoricalWeatherData(Date)
 ```
-INPUT = MATLAB date datatype
+The input `Date` can be a MATLAB date datatype, as e.g.:
 ```
 Date = datetime('today');
 ```
-You can also add a start and end date
+You can also add a start and end date:
 ```
-[startDate=datetime('2020-05-30') endDate=datetime('2021-05-30')]
+Date = [datetime('2020-05-30') datetime('2021-05-30')];
 ```
