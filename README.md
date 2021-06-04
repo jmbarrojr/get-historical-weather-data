@@ -25,3 +25,7 @@ You can also add a start and end date:
 ```
 Date = [datetime('2020-05-30') datetime('2021-05-30')];
 ```
+
+## Download
+You can either clone the repository, download the release as zip file, or visit
+[![View get-historical-weather-data on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/93465-get-historical-weather-data)
