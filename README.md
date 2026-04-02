@@ -1,30 +1,51 @@
 # get-historical-weather-data
 
-## Description
+Fetch historical daily weather data directly into MATLAB — no manual downloads, no spreadsheets,
+no fuss. One function call returns temperature and pressure records for any date range you need.
 
-This function get historical weather data from NCEI API in MATLAB
+## How it works
 
-This is a simple, proof-of-concept to easily fetch weather data in MATLAB.
-The output is set to JSON, and matlab conveniently packs the weather data into a struct datatype, making it easy to handle the data.
+`getHistoricalWeatherData` queries the free [Open-Meteo Archive API](https://open-meteo.com/en/docs/historical-weather-api)
+and returns daily min, max, and mean temperature, along with sea-level and station pressure.
+Results are cached locally so repeated calls for the same dates are instant.
 
-For this code, it uses the Global Surface Summary of the Day (GSOD) dataset, and the Naha statation (47936099999) to fetch temperatures and sea level pressure data.
-For more information on the dataset, visit <https://www.ncei.noaa.gov/data/global-summary-of-the-day/doc/readme.txt>
-
-It should be easy to modify the code to suit other weather data and dataset needs. 
-For more infomatio, visit NCEI API website <https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation>
+By default the function is configured for **Okinawa, Japan** (lat: 26.3358, lon: 127.8014),
+but it is easy to point it at any location — just update the latitude and longitude constants
+inside `getWeatherDataFromService`.
 
 ## Usage
+
+```matlab
+[Tmin, Tmax, Tmean, seaLevelPressure, stationPressure] = getHistoricalWeatherData(Date)
 ```
-[Tmin,Tmax,Tmean,seaLevelPressure,stationPressure] = getHistoricalWeatherData(Date)
+
+| Output | Units | Description |
+|---|---|---|
+| `Tmin` | °C | Daily minimum temperature |
+| `Tmax` | °C | Daily maximum temperature |
+| `Tmean` | °C | Daily mean temperature |
+| `seaLevelPressure` | Pa | Mean sea-level pressure |
+| `stationPressure` | Pa | Mean surface pressure |
+
+### Single day
+
+```matlab
+[Tmin, Tmax, Tmean, SLP, STP] = getHistoricalWeatherData(datetime('today'));
 ```
-The input `Date` can be a MATLAB date datatype, as e.g.:
+
+### Date range
+
+```matlab
+startDate = datetime('2020-05-30');
+endDate   = datetime('2021-05-30');
+[Tmin, Tmax, Tmean, SLP, STP] = getHistoricalWeatherData([startDate, endDate]);
 ```
-Date = datetime('today');
-```
-You can also add a start and end date:
-```
-Date = [datetime('2020-05-30') datetime('2021-05-30')];
-```
+
+## Requirements
+
+- MATLAB with `webread` available (R2014b+)
+- Internet access for dates not yet in the local cache
+
 
 ## Download
 You can either clone the repository, download the release as zip file, or visit
