@@ -1,24 +1,24 @@
 function [Tmin,Tmax,Tmean,seaLevelPressure,stationPressure] = getHistoricalWeatherData(Date)
-% This function get historical weather data from NCEI API
+% This function gets historical weather data from the Open-Meteo Archive API
 %
 % [Tmin,Tmax,Tmean,seaLevelPressure,stationPressure] = getHistoricalWeatherData(Date)
 %
-% INPUT = MATLAB date datatype (eg: Date = datetime('today');
+% INPUT = MATLAB datetime datatype (eg: Date = datetime('today'));
 %         You can also add a start and end date
-%         (eg: [startDate=datetime('2020-05-30') endDate=datetime('2021-05-30')]
+%         (eg: Date = [datetime('2020-05-30') datetime('2021-05-30')])
 %
 % This is a simple, proof-of-concept to easily fetch weather data in MATLAB.
-% The output is set to JSON, and matlab conveniently packs the weather data
-% into a struct datatype, making it easy to handle the data.
+% The API returns JSON, which MATLAB conveniently unpacks into a struct
+% datatype, making it easy to handle the data.
 %
-% For this code, it uses the Global Surface Summary of the Day (GSOD)
-% dataset, and the Naha statation (47936099999) to fetch temperatures and
-% sea level pressure data. For more information on the dataset, visit
-% <https://www.ncei.noaa.gov/data/global-summary-of-the-day/doc/readme.txt>
+% For this code, it fetches daily weather data (temperature and pressure)
+% for Okinawa, Japan (lat: 26.3358, lon: 127.8014) using the Open-Meteo
+% Archive API. For more information on the API, visit
+% <https://open-meteo.com/en/docs/historical-weather-api>
 %
-% It should be easy to modify the code to suit other weather data and dataset
-% needs. For more infomatio, visit NCEI API website
-% <https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation>
+% It should be easy to modify the code to suit other locations and variables.
+% For more information, visit the Open-Meteo documentation at
+% <https://open-meteo.com/en/docs>
 %
 % Julio Barros - 2021
 
@@ -64,19 +64,21 @@ if numel(Date) > 1
     MM = num2str(month(Date(2)),'%02d');
     DD = num2str(day(Date(2)),'%02d');
     endDate = [YYYY '-' MM '-' DD];
-elseif numel(Date) > 2
-    error('Date can only be a two length cell array')
 end
 
-url_achive = "https://archive-api.open-meteo.com/v1/archive";
-params = "?latitude=" + 26.3358 + ...
-	     "&longitude=" + 127.8014 + ...
+% For the current implementation, we will fetch data for Okinawa, Japan.
+% The API endpoint and parameters are constructed according to the API documentation.
+STATION_LATITUDE = 26.3358;
+STATION_LONGITUDE = 127.8014;
+url_archive = "https://archive-api.open-meteo.com/v1/archive";
+params = "?latitude=" + STATION_LATITUDE + ...
+	     "&longitude=" + STATION_LONGITUDE + ...
          "&start_date=" + startDate + ...
          "&end_date=" + endDate +...
 	     "&daily=temperature_2m_mean,temperature_2m_max,temperature_2m_min," + ...
          "pressure_msl_mean,surface_pressure_mean" + ...
 	     "&timezone=auto";
-url = url_achive + params;
+url = url_archive + params;
 try
     opts = weboptions('Timeout', 12);
     out = webread(url, opts);
@@ -118,7 +120,7 @@ end
 
 function cacheFile = getWeatherCacheFilePath()
 cacheDir = fileparts(mfilename('fullpath'));
-cacheFile = fullfile(cacheDir, 'NOAA_GSOD_weather_cache.mat');
+cacheFile = fullfile(cacheDir, 'weather_cache.mat');
 end
 
 function cache = loadWeatherCache(cacheFile)
@@ -182,8 +184,7 @@ if isempty(WeatherData)
     return
 end
 
-% Convert struct array fields to cell arrays to handle varying string lengths
-dateStrings = [WeatherData.DATE]; % Assuming DATE is a string array or cell array of strings
+dateStrings = WeatherData.DATE;
 apiDates = datetime(dateStrings, 'InputFormat', 'yyyy-MM-dd');
 
 Tmean = [WeatherData.TEMP];

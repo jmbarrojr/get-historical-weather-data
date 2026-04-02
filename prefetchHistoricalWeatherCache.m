@@ -1,5 +1,5 @@
 function prefetchHistoricalWeatherCache(yearsBack)
-% prefetchHistoricalWeatherCache Preloads NOAA GSOD weather cache for a date range.
+% prefetchHistoricalWeatherCache Preloads Open-Meteo weather cache for a date range.
 %
 %   prefetchHistoricalWeatherCache()
 %   prefetchHistoricalWeatherCache(yearsBack)
